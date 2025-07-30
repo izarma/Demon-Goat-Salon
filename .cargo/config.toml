@@ -1,0 +1,6 @@
+[target.wasm32-unknown-unknown]
+runner = "wasm-server-runner target/wasm32-unknown-unknown/debug/demon_goat_salon.wasm"
+
+# for Windows
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"
