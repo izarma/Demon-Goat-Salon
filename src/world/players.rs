@@ -36,7 +36,7 @@ pub(crate) fn spawn_players(
     image_assets: Res<ImageAssets>,
     mut texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
 ) {
-    let frame_size = UVec2::new(1023, 1024);
+    let frame_size = UVec2::new(512, 512);
     let player_layout_handle = texture_atlases.add(TextureAtlasLayout::from_grid(
         frame_size as UVec2,
         10,

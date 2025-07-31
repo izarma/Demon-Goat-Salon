@@ -33,14 +33,46 @@ pub struct ImageAssets {
     pub goat_jaw: Handle<Image>,
     #[asset(path = "images/goat/goat-ears.png")]
     pub goat_ears: Handle<Image>,
-    #[asset(path = "images/goat/goat-hair-A1-left.png")]
-    pub goat_hair_a1_left: Handle<Image>,
-    #[asset(path = "images/goat/goat-hair-A1-right.png")]
-    pub goat_hair_a1_right: Handle<Image>,
-    #[asset(path = "images/goat/goat-hair-A2-left.png")]
-    pub goat_hair_a2_left: Handle<Image>,
-    #[asset(path = "images/goat/goat-hair-A2-right.png")]
-    pub goat_hair_a2_right: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair-top.png")]
+    pub hair_top: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair1-left.png")]
+    pub hair1_left: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair1-right.png")]
+    pub hair1_right: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair2-left.png")]
+    pub hair2_left: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair2-right.png")]
+    pub hair2_right: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair3-left.png")]
+    pub hair3_left: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair3-right.png")]
+    pub hair3_right: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair4-left.png")]
+    pub hair4_left: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair4-right.png")]
+    pub hair4_right: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair5-left.png")]
+    pub hair5_left: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair5-right.png")]
+    pub hair5_right: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair6-left.png")]
+    pub hair6_left: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair6-right.png")]
+    pub hair6_right: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair7-left.png")]
+    pub hair7_left: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair7-right.png")]
+    pub hair7_right: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair8-left.png")]
+    pub hair8_left: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair8-right.png")]
+    pub hair8_right: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair9-left.png")]
+    pub hair9_left: Handle<Image>,
+    #[asset(path = "images/goat/hair/hair9-right.png")]
+    pub hair9_right: Handle<Image>,
+    #[asset(path = "images/goat/hair/beard.png")]
+    pub goat_beard: Handle<Image>,
     #[asset(path = "ui/game_over.png")]
     pub game_over_text: Handle<Image>,
 }
