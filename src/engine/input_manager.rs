@@ -1,12 +1,16 @@
 use bevy::{input::gamepad::GamepadConnectionEvent, prelude::*};
 use bevy_enhanced_input::prelude::{Completed, Fired, GamepadDevice, InputAction};
-use bevy_tnua::prelude::{TnuaBuiltinWalk, TnuaController};
+use bevy_tnua::prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController};
 
 use crate::{animation::animation_states::AnimationState, world::players::Player};
 
 #[derive(InputAction)]
 #[action_output(f32)]
 pub struct Move;
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct Jump;
 
 pub fn gamepad_assignment_system(
     mut events: EventReader<GamepadConnectionEvent>,
@@ -33,8 +37,7 @@ pub fn on_move(
     let speed: f32;
     if trigger.value > 0.0 {
         speed = 1000.0;
-    }
-    else {
+    } else {
         speed = -1000.0;
     }
     controllers
@@ -45,7 +48,7 @@ pub fn on_move(
             desired_forward: None,
             float_height: 40.0,
             cling_distance: 20.0,
-            spring_strength: 10.0,
+            spring_strength: 100.0,
             spring_dampening: 1.2,
             acceleration: 100_000_000.0,
             air_acceleration: 40.0,
@@ -56,15 +59,15 @@ pub fn on_move(
             turning_angvel: 10.0,
             ..Default::default()
         });
-    if let Ok(mut player_state) = player_state_query.get_mut(trigger.target()){
+    if let Ok(mut player_state) = player_state_query.get_mut(trigger.target()) {
         let current_state = player_state.clone();
         info!("Current State: {:#?}", current_state);
         match current_state {
             AnimationState::Idle => {
                 *player_state = AnimationState::Walk;
-            },
-            _ => {},
-        }        
+            }
+            _ => {}
+        }
     }
     if let Ok(mut player_facing) = player_facing_query.get_mut(trigger.target()) {
         if trigger.value < 0.0 {
@@ -88,7 +91,7 @@ pub fn on_move_end(
             desired_forward: None,
             float_height: 40.0,
             cling_distance: 20.0,
-            spring_strength: 10.0,
+            spring_strength: 100.0,
             spring_dampening: 1.2,
             acceleration: 100_000_000.0,
             air_acceleration: 40.0,
@@ -99,14 +102,52 @@ pub fn on_move_end(
             turning_angvel: 10.0,
             ..Default::default()
         });
-    if let Ok(mut player_state) = player_state_query.get_mut(trigger.target()){
+    if let Ok(mut player_state) = player_state_query.get_mut(trigger.target()) {
         let current_state = player_state.clone();
-        info!("Current State: {:#?}", current_state);
+        //info!("Current State: {:#?}", current_state);
         match current_state {
             AnimationState::Walk => {
                 *player_state = AnimationState::Idle;
-            },
-            _ => {},
-        }        
+            }
+            _ => {}
+        }
+    }
+}
+
+pub(crate) fn on_jump(
+    trigger: Trigger<Fired<Jump>>,
+    mut controllers: Query<&mut TnuaController, With<Player>>,
+    mut player_state_query: Query<&mut AnimationState, With<Player>>,
+) {
+    info!("Player {} Jumping", trigger.target());
+    controllers
+        .get_mut(trigger.target())
+        .unwrap()
+        .action(TnuaBuiltinJump {
+            height: 40.0,
+            vertical_displacement: None,
+            allow_in_air: false,
+            upslope_extra_gravity: 30.0,
+            takeoff_extra_gravity: 30.0,
+            takeoff_above_velocity: 2.0,
+            fall_extra_gravity: 20.0,
+            shorten_extra_gravity: 60.0,
+            peak_prevention_at_upward_velocity: 1.0,
+            peak_prevention_extra_gravity: 20.0,
+            reschedule_cooldown: None,
+            input_buffer_time: 0.2,
+            force_forward: None,
+            disable_force_forward_after_peak: true,
+        });
+
+    if let Ok(mut player_state) = player_state_query.get_mut(trigger.target()) {
+        let current_state = player_state.clone();
+        info!("Current State: {:#?}", current_state);
+        match current_state {
+            AnimationState::Jump => {}
+            _ => {
+                *player_state = AnimationState::Jump;
+            }
+        }
     }
 }

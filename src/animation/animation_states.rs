@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 
-use crate::{animation::sprite_animation::SpriteAnimState, engine::asset_loader::ImageAssets};
+use crate::{
+    animation::sprite_animation::{AnimationEvent, SpriteAnimState},
+    engine::asset_loader::ImageAssets,
+    world::players::Player,
+};
 
 #[derive(Component, Default, Debug, Clone)]
 pub enum AnimationState {
@@ -103,7 +107,10 @@ pub fn prepare_animations(
 
 pub fn handle_animating(
     player_animations: Res<AnimationClips>,
-    mut query: Query<(&mut SpriteAnimState, &mut Sprite, &AnimationState, Entity), Changed<AnimationState>>
+    mut query: Query<
+        (&mut SpriteAnimState, &mut Sprite, &AnimationState, Entity),
+        Changed<AnimationState>,
+    >,
 ) {
     for (mut anim_state, mut sprite, state, entity_id) in query.iter_mut() {
         info!("Player {} State Changed to {:#?}", entity_id, state.clone());
@@ -111,15 +118,28 @@ pub fn handle_animating(
             AnimationState::Idle => {
                 *anim_state = player_animations.idle.anim_state.clone();
                 *sprite = player_animations.idle.sprite.clone();
-            },
+            }
             AnimationState::Walk => {
                 *anim_state = player_animations.walk.anim_state.clone();
                 *sprite = player_animations.walk.sprite.clone();
-            },
+            }
             AnimationState::Jump => {
                 *anim_state = player_animations.jump.anim_state.clone();
                 *sprite = player_animations.jump.sprite.clone();
-            },
+            }
         }
     }
-} 
+}
+
+pub fn switch_player_animation_states(
+    mut player_anim_event_reader: EventReader<AnimationEvent>,
+    mut state_query: Query<&mut AnimationState, With<Player>>,
+) {
+    for event in player_anim_event_reader.read() {
+        if event.finished {
+            if let Ok(mut player_state) = state_query.get_mut(event.entity) {
+                *player_state = AnimationState::Idle;
+            }
+        }
+    }
+}

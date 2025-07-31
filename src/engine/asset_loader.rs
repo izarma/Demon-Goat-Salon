@@ -10,6 +10,12 @@ pub struct ImageAssets {
     pub imp_walk: Handle<Image>,
     #[asset(path = "images/imp/Imp-JUMP-Sprite-sheet.png")]
     pub imp_jump: Handle<Image>,
+    #[asset(path = "images/salon/control-panel.png")]
+    pub control_panel: Handle<Image>,
+    #[asset(path = "images/salon/background.png")]
+    pub background: Handle<Image>,
+    #[asset(path = "images/salon/floor.png")]
+    pub floor: Handle<Image>,
     // #[asset(path = "images/goat/goat-base.png")]
     // pub goat_base: Handle<Image>,
     // #[asset(path = "images/goat/goat-jaw.png")]

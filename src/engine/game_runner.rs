@@ -3,21 +3,23 @@ use bevy::prelude::*;
 use bevy_asset_loader::loading_state::{
     LoadingState, LoadingStateAppExt, config::ConfigureLoadingState,
 };
-use bevy_enhanced_input::{
-    EnhancedInputPlugin,
-    prelude::InputContextAppExt,
-};
+use bevy_enhanced_input::{EnhancedInputPlugin, prelude::InputContextAppExt};
 use bevy_tnua::prelude::TnuaControllerPlugin;
 use bevy_tnua_avian2d::TnuaAvian2dPlugin;
 
 use crate::{
-    animation::{animation_states::{handle_animating, prepare_animations}, sprite_animation::animate_sprite},
-    engine::{asset_loader::ImageAssets, input_manager::{gamepad_assignment_system, on_move, on_move_end}, GameState},
+    animation::{
+        animation_states::{handle_animating, prepare_animations, switch_player_animation_states},
+        sprite_animation::{AnimationEvent, animate_sprite},
+    },
+    engine::{
+        GameState,
+        asset_loader::ImageAssets,
+        input_manager::{gamepad_assignment_system, on_jump, on_move, on_move_end},
+    },
     ui::GameUiPlugin,
     world::{
-        players::{
-            spawn_players, Player
-        },
+        players::{Player, spawn_players},
         salon::spawn_platform,
     },
 };
@@ -36,6 +38,8 @@ impl Plugin for GameRunnerPlugin {
         .add_input_context::<Player>()
         .add_observer(on_move)
         .add_observer(on_move_end)
+        .add_observer(on_jump)
+        .add_event::<AnimationEvent>()
         .add_systems(Startup, spawn_camera)
         .add_loading_state(
             LoadingState::new(GameState::Loading)
@@ -43,9 +47,20 @@ impl Plugin for GameRunnerPlugin {
                 .load_collection::<ImageAssets>()
                 .continue_to_state(GameState::InGame),
         )
-        .add_systems(OnEnter(GameState::InGame), (spawn_platform, spawn_players, prepare_animations))
+        .add_systems(
+            OnEnter(GameState::InGame),
+            (spawn_platform, spawn_players, prepare_animations),
+        )
         .add_systems(PreUpdate, gamepad_assignment_system)
-        .add_systems(Update, (handle_animating, animate_sprite).run_if(in_state(GameState::InGame)));
+        .add_systems(
+            Update,
+            (
+                handle_animating,
+                animate_sprite,
+                switch_player_animation_states,
+            )
+                .run_if(in_state(GameState::InGame)),
+        );
     }
 }
 

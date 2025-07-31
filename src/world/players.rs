@@ -3,7 +3,14 @@ use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
 use bevy_tnua::prelude::*;
 
-use crate::{animation::{animation_states::AnimationState, sprite_animation::SpriteAnimState}, engine::{asset_loader::ImageAssets, game_runner::OnGameScreen, input_manager::Move}};
+use crate::{
+    animation::{animation_states::AnimationState, sprite_animation::SpriteAnimState},
+    engine::{
+        asset_loader::ImageAssets,
+        game_runner::OnGameScreen,
+        input_manager::{Jump, Move},
+    },
+};
 
 #[derive(Component)]
 #[require(
@@ -37,7 +44,7 @@ pub(crate) fn spawn_players(
         None,
         None,
     ));
-    commands.spawn((
+    let mut plr1 = commands.spawn((
         Player::One,
         Sprite {
             image: image_assets.imp_idle.clone(),
@@ -49,22 +56,27 @@ pub(crate) fn spawn_players(
             ..default()
         },
         Transform::from_xyz(-256., 180., 0.),
-        actions!(
-            Player[(
-                Action::<Move>::new(),
-                DeadZone::default(),
-                DeltaScale,
-                Bindings::spawn((
-                    Bidirectional {
-                        positive: Binding::from(KeyCode::KeyD),
-                        negative: Binding::from(KeyCode::KeyA),
-                    },
-                    Spawn(Binding::from(GamepadAxis::LeftStickX)),
-                )),
-            )]
-        ),
     ));
-    commands.spawn((
+
+    plr1.insert((actions!(
+        Player[(
+            Action::<Move>::new(),
+            DeadZone::default(),
+            DeltaScale,
+            Bindings::spawn((
+                Bidirectional {
+                    positive: Binding::from(KeyCode::KeyD),
+                    negative: Binding::from(KeyCode::KeyA),
+                },
+                Spawn(Binding::from(GamepadAxis::LeftStickX)),
+            )),
+        ), (
+            Action::<Jump>::new(),
+            bindings![KeyCode::KeyW, GamepadButton::LeftTrigger],
+        )]
+    ),));
+
+    let mut plr2 = commands.spawn((
         Player::Two,
         Transform::from_xyz(256., 180., 0.),
         Sprite {
@@ -76,19 +88,23 @@ pub(crate) fn spawn_players(
             custom_size: Some(Vec2::new(128., 128.)),
             ..default()
         },
-        actions!(
-            Player[(
-                Action::<Move>::new(),
-                DeadZone::default(),
-                DeltaScale,
-                Bindings::spawn((
-                    Bidirectional {
-                        positive: Binding::from(KeyCode::ArrowRight),
-                        negative: Binding::from(KeyCode::ArrowLeft),
-                    },
-                    Spawn(Binding::from(GamepadAxis::LeftStickX)),
-                )),
-            )]
-        ),
     ));
+
+    plr2.insert((actions!(
+        Player[(
+            Action::<Move>::new(),
+            DeadZone::default(),
+            DeltaScale,
+            Bindings::spawn((
+                Bidirectional {
+                    positive: Binding::from(KeyCode::ArrowRight),
+                    negative: Binding::from(KeyCode::ArrowLeft),
+                },
+                Spawn(Binding::from(GamepadAxis::LeftStickX)),
+            )),
+        ), (
+            Action::<Jump>::new(),
+            bindings![KeyCode::ArrowUp, GamepadButton::LeftTrigger],
+        )]
+    ),));
 }
