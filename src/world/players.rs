@@ -56,6 +56,7 @@ pub(crate) fn spawn_players(
             ..default()
         },
         Transform::from_xyz(-256., 180., 0.),
+        OnGameScreen,
     ));
 
     plr1.insert((actions!(
@@ -91,6 +92,7 @@ pub(crate) fn spawn_players(
             custom_size: Some(Vec2::new(128., 128.)),
             ..default()
         },
+        OnGameScreen,
     ));
 
     plr2.insert((actions!(

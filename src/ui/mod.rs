@@ -1,11 +1,13 @@
 use bevy::prelude::*;
 
 use crate::{
-    engine::GameState,
-    ui::main_menu::{button_interaction_system, cleanup_menu, setup_main_menu},
+    engine::{game_runner::OnGameScreen, GameState},
+    ui::{game_over::{cleanup_gameover, retry_button_interaction, spawn_game_over_ui}, main_menu::{button_interaction_system, cleanup_menu, setup_main_menu}},
 };
 
 pub mod main_menu;
+pub mod game_over;
+pub mod customer_details;
 
 pub struct GameUiPlugin;
 
@@ -17,7 +19,14 @@ impl Plugin for GameUiPlugin {
                 Update,
                 button_interaction_system.run_if(in_state(GameState::MainMenu)),
             )
-            .add_systems(OnExit(GameState::MainMenu), cleanup_menu);
+            .add_systems(OnExit(GameState::MainMenu), cleanup_menu)
+            .add_systems(OnExit(GameState::InGame), cleanup_game)
+            .add_systems(OnEnter(GameState::GameOver), spawn_game_over_ui)
+            .add_systems(
+                Update,
+                retry_button_interaction.run_if(in_state(GameState::GameOver)),
+            )
+            .add_systems(OnExit(GameState::GameOver), cleanup_gameover);
     }
 }
 
@@ -31,4 +40,10 @@ fn spawn_camera(mut commands: Commands) {
         ..OrthographicProjection::default_2d()
     });
     commands.spawn((main_camera, projection));
+}
+
+pub fn cleanup_game(mut commands: Commands, query: Query<Entity, With<OnGameScreen>>) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn();
+    }
 }

@@ -4,6 +4,7 @@ use bevy_asset_loader::loading_state::{
     LoadingState, LoadingStateAppExt, config::ConfigureLoadingState,
 };
 use bevy_enhanced_input::{EnhancedInputPlugin, prelude::InputContextAppExt};
+use bevy_seedling::SeedlingPlugin;
 use bevy_tnua::prelude::TnuaControllerPlugin;
 use bevy_tnua_avian2d::TnuaAvian2dPlugin;
 
@@ -13,16 +14,14 @@ use crate::{
         sprite_animation::{animate_sprite, AnimationEvent},
     },
     engine::{
-        asset_loader::ImageAssets, input_manager::{
+        asset_loader::{AudioAssets, ImageAssets}, input_manager::{
             close_control_panel_interact, gamepad_assignment_system, on_interact, on_jump, on_move,
             on_move_end,
         }, GameState
     },
-    ui::GameUiPlugin,
+    ui::{customer_details::setup_points, GameUiPlugin},
     world::{
-        platform_control::{on_navigating_platform, ControlPanelInputContext},
-        players::{spawn_players, Player},
-        salon::spawn_platform,
+        goat::CustomerPlugin, platform_control::{on_navigating_platform, ControlPanelInputContext}, players::{spawn_players, Player}, salon::spawn_platform
     },
 };
 
@@ -36,6 +35,8 @@ impl Plugin for GameRunnerPlugin {
             TnuaControllerPlugin::new(FixedUpdate),
             TnuaAvian2dPlugin::new(FixedUpdate),
             GameUiPlugin,
+            CustomerPlugin,
+            SeedlingPlugin::default(),
         ))
         .add_input_context::<Player>()
         .add_input_context::<ControlPanelInputContext>()
@@ -48,13 +49,13 @@ impl Plugin for GameRunnerPlugin {
         .add_event::<AnimationEvent>()
         .add_loading_state(
             LoadingState::new(GameState::Loading)
-                //.load_collection::<AudioAssets>()
+                .load_collection::<AudioAssets>()
                 .load_collection::<ImageAssets>()
                 .continue_to_state(GameState::InGame),
         )
         .add_systems(
             OnEnter(GameState::InGame),
-            (spawn_platform, spawn_players, prepare_animations),
+            (spawn_platform, spawn_players, prepare_animations, setup_points),
         )
         .add_systems(PreUpdate, gamepad_assignment_system)
         .add_systems(
