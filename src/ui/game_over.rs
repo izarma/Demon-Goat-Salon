@@ -1,7 +1,14 @@
 use bevy::prelude::*;
 use bevy_seedling::sample::SamplePlayer;
 
-use crate::{consts::{BUTTON_BORDER, HOVERED_BUTTON, NORMAL_BUTTON, TEXT_COLOR}, engine::{asset_loader::{AudioAssets, ImageAssets}, GameState}, ui::customer_details::Score};
+use crate::{
+    consts::{BUTTON_BORDER, HOVERED_BUTTON, NORMAL_BUTTON, TEXT_COLOR},
+    engine::{
+        GameState,
+        asset_loader::{AudioAssets, ImageAssets},
+    },
+    ui::customer_details::Score,
+};
 
 #[derive(Component)]
 pub enum GameOverButtons {
@@ -156,7 +163,10 @@ pub fn retry_button_interaction(
 }
 
 pub fn play_game_over_bg(mut commands: Commands, audio_assets: Res<AudioAssets>) {
-    commands.spawn((SamplePlayer::new(audio_assets.lose.clone()).looping(),));
+    commands.spawn((
+        SamplePlayer::new(audio_assets.lose.clone()).looping(),
+        OnGameOver,
+    ));
 }
 
 pub fn cleanup_gameover(mut commands: Commands, query: Query<Entity, With<OnGameOver>>) {

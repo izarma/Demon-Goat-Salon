@@ -1,7 +1,4 @@
-use bevy::{
-    input::gamepad::GamepadConnectionEvent,
-    prelude::*,
-};
+use bevy::{input::gamepad::GamepadConnectionEvent, prelude::*};
 use bevy_enhanced_input::{
     action::{Action, ActionSettings},
     actions, bindings,
@@ -13,8 +10,10 @@ use bevy_enhanced_input::{
 use bevy_tnua::prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController};
 
 use crate::{
-    animation::animation_states::AnimationState,
-    world::{platform_control::ControlPanelInputContext, players::Player},
+    animation::animation_states::AnimationState, ui::customer_details::Score, world::{
+        goat::GoatHair, platform_control::ControlPanelInputContext, players::Player,
+        salon::ControlPanel,
+    }
 };
 
 #[derive(InputAction)]
@@ -186,23 +185,122 @@ pub(crate) fn on_jump(
     }
 }
 
-pub(crate) fn on_interact(trigger: Trigger<Fired<Interact>>, mut commands: Commands) {
+pub(crate) fn on_interact(
+    trigger: Trigger<Fired<Interact>>,
+    mut commands: Commands,
+    player_query: Query<(&Player, &Transform)>,
+    control_panel_query: Query<&Transform, With<ControlPanel>>,
+    hair_interaction_query: Query<(Entity, &Transform), With<GoatHair>>,
+    mut points_query: Query<&mut Score>,
+) {
+    let max_interaction_radius = 40.0 * 40.0;
+
     info!("Player {}, Pressed Interact!", trigger.target());
-    commands.entity(trigger.target()).insert((
-        ControlPanelInputContext,
-        ContextPriority::<ControlPanelInputContext>::new(1),
-        actions!(ControlPanelInputContext[
-            (
-                Action::<NavigatePlatform>::new(),
-                Bindings::spawn((Cardinal::wasd_keys(), Axial::left_stick())),
-            ), (
-                Action::<CloseInteract>::new(),
-                ActionSettings {
-                    require_reset: true,
-                    ..Default::default()
-                },
-                bindings![KeyCode::KeyE, GamepadButton::North]
-            )
-        ]),
-    ));
+    if let Ok((player, player_transform)) = player_query.get(trigger.target()) {
+        match player {
+            Player::One => {
+                if let Ok(control_panel_transform) = control_panel_query.single() {
+                    let distance = control_panel_transform
+                        .translation
+                        .distance_squared(player_transform.translation);
+                    // info!(
+                    //     "Distance between Player {:#?} and Control Panel {:#?} is {:#?} and threshold is {}",
+                    //     player_transform.translation,
+                    //     control_panel_transform.translation,
+                    //     distance,
+                    //     max_interaction_radius
+                    // );
+                    if max_interaction_radius > distance {
+                        commands.entity(trigger.target()).insert((
+                            ControlPanelInputContext,
+                            ContextPriority::<ControlPanelInputContext>::new(1),
+                            actions!(ControlPanelInputContext[
+                                (
+                                    Action::<NavigatePlatform>::new(),
+                                    Bindings::spawn((Cardinal::wasd_keys(), Axial::left_stick())),
+                                ), (
+                                    Action::<CloseInteract>::new(),
+                                    ActionSettings {
+                                        require_reset: true,
+                                        ..Default::default()
+                                    },
+                                    bindings![KeyCode::KeyE, GamepadButton::RightTrigger]
+                                )
+                            ]),
+                        ));
+                    }
+                }
+                let mut closest_hair: Option<Entity> = None;
+                let mut min_dist_sq = 150.0 * 150.0;
+                for (entity, hair_transform) in hair_interaction_query {
+                    // Check closest hair with threshold max_interaction_radius and despawn only that
+                    let distance = hair_transform
+                        .translation
+                        .distance_squared(player_transform.translation);
+                    if distance < min_dist_sq {
+                        min_dist_sq = distance;
+                        closest_hair = Some(entity);
+                    }
+                    
+                }
+                match closest_hair {
+                    Some(entity_id) => {
+                        commands.entity(entity_id).despawn();
+                        if let Ok(mut score) = points_query.single_mut() {
+                            score.total += 10;
+                        }
+                    },
+                    None => {},
+                }
+            }
+            Player::Two => {
+                if let Ok(control_panel_transform) = control_panel_query.single() {
+                    let distance = control_panel_transform
+                        .translation
+                        .distance_squared(player_transform.translation);
+                    if max_interaction_radius > distance {
+                        commands.entity(trigger.target()).insert((
+                            ControlPanelInputContext,
+                            ContextPriority::<ControlPanelInputContext>::new(1),
+                            actions!(ControlPanelInputContext[
+                                (
+                                    Action::<NavigatePlatform>::new(),
+                                    Bindings::spawn((Cardinal::arrow_keys(), Axial::left_stick())),
+                                ), (
+                                    Action::<CloseInteract>::new(),
+                                    ActionSettings {
+                                        require_reset: true,
+                                        ..Default::default()
+                                    },
+                                    bindings![KeyCode::Enter, GamepadButton::RightTrigger]
+                                )
+                            ]),
+                        ));
+                    }
+                let mut closest_hair: Option<Entity> = None;
+                let mut min_dist_sq = max_interaction_radius.clone();
+                for (entity, hair_transform) in hair_interaction_query {
+                    // Check closest hair with threshold max_interaction_radius and despawn only that
+                    let distance = hair_transform
+                        .translation
+                        .distance_squared(player_transform.translation);
+                    if distance < min_dist_sq {
+                        min_dist_sq = distance;
+                        closest_hair = Some(entity);
+                    }
+                    
+                }
+                match closest_hair {
+                    Some(entity_id) => {
+                        commands.entity(entity_id).despawn();
+                        if let Ok(mut score) = points_query.single_mut() {
+                            score.total += 10;
+                        }
+                    },
+                    None => {},
+                }
+                }
+            }
+        }
+    }
 }

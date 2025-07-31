@@ -2,12 +2,16 @@ use bevy::prelude::*;
 
 use crate::{
     engine::{game_runner::OnGameScreen, GameState},
-    ui::{game_over::{cleanup_gameover, retry_button_interaction, spawn_game_over_ui}, main_menu::{button_interaction_system, cleanup_menu, setup_main_menu}},
+    ui::{
+        customer_details::update_points, game_over::{
+            cleanup_gameover, play_game_over_bg, retry_button_interaction, spawn_game_over_ui,
+        }, main_menu::{button_interaction_system, cleanup_menu, setup_main_menu}
+    },
 };
 
-pub mod main_menu;
-pub mod game_over;
 pub mod customer_details;
+pub mod game_over;
+pub mod main_menu;
 
 pub struct GameUiPlugin;
 
@@ -20,8 +24,12 @@ impl Plugin for GameUiPlugin {
                 button_interaction_system.run_if(in_state(GameState::MainMenu)),
             )
             .add_systems(OnExit(GameState::MainMenu), cleanup_menu)
+            .add_systems(Update, update_points.run_if(in_state(GameState::InGame)))
             .add_systems(OnExit(GameState::InGame), cleanup_game)
-            .add_systems(OnEnter(GameState::GameOver), spawn_game_over_ui)
+            .add_systems(
+                OnEnter(GameState::GameOver),
+                (spawn_game_over_ui, play_game_over_bg),
+            )
             .add_systems(
                 Update,
                 retry_button_interaction.run_if(in_state(GameState::GameOver)),

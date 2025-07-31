@@ -1,6 +1,11 @@
 use bevy::prelude::*;
 
-use crate::{consts::TEXT_COLOR, engine::{game_runner::OnGameScreen, GameState}, ui::game_over::OnGameOver, world::goat::Customer};
+use crate::{
+    consts::TEXT_COLOR,
+    engine::{GameState, game_runner::OnGameScreen},
+    ui::game_over::OnGameOver,
+    world::goat::Customer,
+};
 
 #[derive(Component)]
 pub struct TimerUi;
@@ -58,10 +63,14 @@ pub struct Score {
     pub total: i32,
 }
 
+#[derive(Component)]
+pub struct ScoreText;
+
 pub fn setup_points(mut commands: Commands, asset_server: Res<AssetServer>) {
     let initial_points = 0;
     commands.spawn((
         OnGameScreen,
+        ScoreText,
         Text::new(format!("Current Score : {:#?}", initial_points)),
         Transform::from_translation(Vec3::new(400.0, 0.0, 0.0)),
         BorderRadius::ZERO,
@@ -86,6 +95,18 @@ pub fn setup_points(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
         OnGameOver,
     ));
+}
+
+pub fn update_points(
+    mut points_text_query: Query<&mut Text, With<ScoreText>>,
+    points_query: Query<&Score, Changed<Score>>,
+) {
+    if let Ok(score) = points_query.single() {
+        info!("Score UP : {}", score.total);
+        if let Ok(mut score_text) = points_text_query.single_mut() {
+            *score_text = Text::new(format!("Current Score : {:#?}", score.total));
+        }
+    }
 }
 
 pub fn game_over(mut game_state: ResMut<NextState<GameState>>, customer_query: Query<&Customer>) {

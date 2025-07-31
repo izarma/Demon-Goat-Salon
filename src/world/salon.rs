@@ -9,6 +9,9 @@ pub struct Floor;
 #[derive(Component)]
 pub struct MovingPlatform;
 
+#[derive(Component)]
+pub struct ControlPanel;
+
 pub(crate) fn spawn_platform(mut commands: Commands, image_assets: Res<ImageAssets>) {
     commands.spawn((
         Floor,
@@ -30,6 +33,7 @@ pub(crate) fn spawn_platform(mut commands: Commands, image_assets: Res<ImageAsse
         },
         Transform::from_xyz(-350.0, -173.0, -2.0),
         OnGameOver,
+        ControlPanel,
     ));
     commands.spawn((
         Sprite {

@@ -3,7 +3,17 @@ use std::time::Duration;
 use bevy::prelude::*;
 use bevy_seedling::sample::SamplePlayer;
 
-use crate::{engine::{asset_loader::{AudioAssets, ImageAssets}, game_runner::OnGameScreen, GameState}, ui::{customer_details::{game_over, spawn_timer, update_timer}, game_over::OnGameOver}};
+use crate::{
+    engine::{
+        GameState,
+        asset_loader::{AudioAssets, ImageAssets},
+        game_runner::OnGameScreen,
+    },
+    ui::{
+        customer_details::{game_over, spawn_timer, update_timer},
+        game_over::OnGameOver,
+    },
+};
 
 pub struct CustomerPlugin;
 
@@ -21,7 +31,10 @@ impl Plugin for CustomerPlugin {
 }
 
 pub fn play_salon_bg(mut commands: Commands, audio_assets: Res<AudioAssets>) {
-    commands.spawn((SamplePlayer::new(audio_assets.background.clone()).looping(), OnGameScreen));
+    commands.spawn((
+        SamplePlayer::new(audio_assets.background.clone()).looping(),
+        OnGameScreen,
+    ));
 }
 
 #[derive(Component)]
@@ -49,7 +62,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
     // goat base
     commands.spawn((
         Customer {
-            anger_timer: Timer::new(Duration::from_secs_f32(60.0), TimerMode::Once),
+            anger_timer: Timer::new(Duration::from_secs_f32(89.0), TimerMode::Once),
         },
         Sprite {
             image: image_assets.goat_base.clone(),
@@ -61,6 +74,19 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         OnGameOver,
+    ));
+
+    // goat body
+    commands.spawn((
+        Sprite  {
+            image: image_assets.goat_body.clone(),
+            custom_size: Some(Vec2::new(389.4, 322.8)),
+            ..default()
+        },
+        Transform {
+            translation: Vec3::new(0., -160., -14.),
+            ..default()
+        },
     ));
 
     // goat jaw
@@ -94,41 +120,41 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(0., 150., -11.5),
+            translation: Vec3::new(0., 150., -14.0),
             ..default()
         },
         OnGameOver,
     ));
 
-    // goat hair A1 left
-    commands.spawn((
-        GoatHair,
-        Sprite {
-            image: image_assets.goat_hair_a1_left.clone(),
-            custom_size: Some(Vec2::new(136.64, 216.)),
-            ..default()
-        },
-        Transform {
-            translation: Vec3::new(-60., 80., -11.4),
-            ..default()
-        },
-        OnGameOver,
-    ));
+    // // goat hair A1 left
+    // commands.spawn((
+    //     GoatHair,
+    //     Sprite {
+    //         image: image_assets.goat_hair_a1_left.clone(),
+    //         custom_size: Some(Vec2::new(136.64, 216.)),
+    //         ..default()
+    //     },
+    //     Transform {
+    //         translation: Vec3::new(-60., 80., -11.4),
+    //         ..default()
+    //     },
+    //     OnGameOver,
+    // ));
 
-    // goat hair A1 right
-    commands.spawn((
-        GoatHair,
-        Sprite {
-            image: image_assets.goat_hair_a1_right.clone(),
-            custom_size: Some(Vec2::new(136.64, 216.64)),
-            ..default()
-        },
-        Transform {
-            translation: Vec3::new(60., 80., -10.5),
-            ..default()
-        },
-        OnGameOver,
-    ));
+    // // goat hair A1 right
+    // commands.spawn((
+    //     GoatHair,
+    //     Sprite {
+    //         image: image_assets.goat_hair_a1_right.clone(),
+    //         custom_size: Some(Vec2::new(136.64, 216.64)),
+    //         ..default()
+    //     },
+    //     Transform {
+    //         translation: Vec3::new(60., 80., -10.5),
+    //         ..default()
+    //     },
+    //     OnGameOver,
+    // ));
 
     // // goat hair A2 left
     // commands.spawn((

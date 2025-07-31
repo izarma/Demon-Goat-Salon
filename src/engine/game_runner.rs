@@ -11,17 +11,22 @@ use bevy_tnua_avian2d::TnuaAvian2dPlugin;
 use crate::{
     animation::{
         animation_states::{handle_animating, prepare_animations, switch_player_animation_states},
-        sprite_animation::{animate_sprite, AnimationEvent},
+        sprite_animation::{AnimationEvent, animate_sprite},
     },
     engine::{
-        asset_loader::{AudioAssets, ImageAssets}, input_manager::{
+        GameState,
+        asset_loader::{AudioAssets, ImageAssets},
+        input_manager::{
             close_control_panel_interact, gamepad_assignment_system, on_interact, on_jump, on_move,
             on_move_end,
-        }, GameState
+        },
     },
-    ui::{customer_details::setup_points, GameUiPlugin},
+    ui::{GameUiPlugin, customer_details::setup_points},
     world::{
-        goat::CustomerPlugin, platform_control::{on_navigating_platform, ControlPanelInputContext}, players::{spawn_players, Player}, salon::spawn_platform
+        goat::CustomerPlugin,
+        platform_control::{ControlPanelInputContext, on_navigating_platform},
+        players::{Player, spawn_players},
+        salon::spawn_platform,
     },
 };
 
@@ -55,7 +60,12 @@ impl Plugin for GameRunnerPlugin {
         )
         .add_systems(
             OnEnter(GameState::InGame),
-            (spawn_platform, spawn_players, prepare_animations, setup_points),
+            (
+                spawn_platform,
+                spawn_players,
+                prepare_animations,
+                setup_points,
+            ),
         )
         .add_systems(PreUpdate, gamepad_assignment_system)
         .add_systems(

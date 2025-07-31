@@ -19,8 +19,16 @@ pub struct ImageAssets {
     pub floor: Handle<Image>,
     #[asset(path = "images/salon/platform.png")]
     pub moving_platform: Handle<Image>,
+    #[asset(path = "images/salon/Golden-Apple.png")]
+    pub golden_apple: Handle<Image>,
+    #[asset(path = "images/salon/Backet-of-Gold-Apples.png")]
+    pub backet_gold_apples: Handle<Image>,
+    #[asset(path = "images/salon/joystick.png")]
+    pub joystick: Handle<Image>,
     #[asset(path = "images/goat/goat-base.png")]
     pub goat_base: Handle<Image>,
+    #[asset(path = "images/goat/goat-body.png")]
+    pub goat_body: Handle<Image>,
     #[asset(path = "images/goat/goat-jaw.png")]
     pub goat_jaw: Handle<Image>,
     #[asset(path = "images/goat/goat-ears.png")]
