@@ -16,6 +16,8 @@ pub struct ImageAssets {
     pub background: Handle<Image>,
     #[asset(path = "images/salon/floor.png")]
     pub floor: Handle<Image>,
+    #[asset(path = "images/salon/platform.png")]
+    pub moving_platform: Handle<Image>,
     // #[asset(path = "images/goat/goat-base.png")]
     // pub goat_base: Handle<Image>,
     // #[asset(path = "images/goat/goat-jaw.png")]

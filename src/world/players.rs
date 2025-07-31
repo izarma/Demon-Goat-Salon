@@ -8,7 +8,7 @@ use crate::{
     engine::{
         asset_loader::ImageAssets,
         game_runner::OnGameScreen,
-        input_manager::{Jump, Move},
+        input_manager::{Interact, Jump, Move},
     },
 };
 
@@ -73,6 +73,9 @@ pub(crate) fn spawn_players(
         ), (
             Action::<Jump>::new(),
             bindings![KeyCode::KeyW, GamepadButton::LeftTrigger],
+        ) , (
+            Action::<Interact>::new(),
+            bindings![KeyCode::KeyE, GamepadButton::RightTrigger],
         )]
     ),));
 
@@ -105,6 +108,9 @@ pub(crate) fn spawn_players(
         ), (
             Action::<Jump>::new(),
             bindings![KeyCode::ArrowUp, GamepadButton::LeftTrigger],
+        ) , (
+            Action::<Interact>::new(),
+            bindings![KeyCode::Enter, GamepadButton::RightTrigger],
         )]
     ),));
 }

@@ -6,6 +6,9 @@ use crate::engine::asset_loader::ImageAssets;
 #[derive(Component)]
 pub struct Floor;
 
+#[derive(Component)]
+pub struct MovingPlatform;
+
 pub(crate) fn spawn_platform(mut commands: Commands, image_assets: Res<ImageAssets>) {
     commands.spawn((
         Floor,
@@ -33,5 +36,16 @@ pub(crate) fn spawn_platform(mut commands: Commands, image_assets: Res<ImageAsse
             ..default()
         },
         Transform::from_xyz(0.0, 0.0, -20.0),
+    ));
+    commands.spawn((
+        Sprite {
+            image: image_assets.moving_platform.clone(),
+            custom_size: Some(Vec2::new(115.0, 322.0)),
+            ..default()
+        },
+        Transform::from_xyz(300.0, -340.0, -11.0),
+        RigidBody::Static,
+        Collider::rectangle(115., 322.0),
+        MovingPlatform,
     ));
 }

@@ -10,16 +10,18 @@ use bevy_tnua_avian2d::TnuaAvian2dPlugin;
 use crate::{
     animation::{
         animation_states::{handle_animating, prepare_animations, switch_player_animation_states},
-        sprite_animation::{AnimationEvent, animate_sprite},
+        sprite_animation::{animate_sprite, AnimationEvent},
     },
     engine::{
-        GameState,
-        asset_loader::ImageAssets,
-        input_manager::{gamepad_assignment_system, on_jump, on_move, on_move_end},
+        asset_loader::ImageAssets, input_manager::{
+            close_control_panel_interact, gamepad_assignment_system, on_interact, on_jump, on_move,
+            on_move_end,
+        }, GameState
     },
     ui::GameUiPlugin,
     world::{
-        players::{Player, spawn_players},
+        platform_control::{on_navigating_platform, ControlPanelInputContext},
+        players::{spawn_players, Player},
         salon::spawn_platform,
     },
 };
@@ -29,18 +31,21 @@ pub struct GameRunnerPlugin;
 impl Plugin for GameRunnerPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            PhysicsPlugins::default(),
+            PhysicsPlugins::default().with_length_unit(10.0),
             EnhancedInputPlugin,
             TnuaControllerPlugin::new(FixedUpdate),
             TnuaAvian2dPlugin::new(FixedUpdate),
             GameUiPlugin,
         ))
         .add_input_context::<Player>()
+        .add_input_context::<ControlPanelInputContext>()
         .add_observer(on_move)
         .add_observer(on_move_end)
         .add_observer(on_jump)
+        .add_observer(on_interact)
+        .add_observer(close_control_panel_interact)
+        .add_observer(on_navigating_platform)
         .add_event::<AnimationEvent>()
-        .add_systems(Startup, spawn_camera)
         .add_loading_state(
             LoadingState::new(GameState::Loading)
                 //.load_collection::<AudioAssets>()
@@ -66,15 +71,3 @@ impl Plugin for GameRunnerPlugin {
 
 #[derive(Component, Default)]
 pub struct OnGameScreen;
-
-fn spawn_camera(mut commands: Commands) {
-    let main_camera = Camera2d::default();
-    let projection = Projection::Orthographic(OrthographicProjection {
-        scaling_mode: bevy::render::camera::ScalingMode::AutoMin {
-            min_width: (1024.0),
-            min_height: (576.0),
-        },
-        ..OrthographicProjection::default_2d()
-    });
-    commands.spawn((main_camera, projection));
-}

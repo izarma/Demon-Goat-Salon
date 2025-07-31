@@ -1,8 +1,21 @@
-use bevy::{input::gamepad::GamepadConnectionEvent, prelude::*};
-use bevy_enhanced_input::prelude::{Completed, Fired, GamepadDevice, InputAction};
+use bevy::{
+    input::gamepad::GamepadConnectionEvent,
+    prelude::*,
+};
+use bevy_enhanced_input::{
+    action::{Action, ActionSettings},
+    actions, bindings,
+    prelude::{
+        Actions, Axial, Bindings, Cardinal, Completed, ContextPriority, Fired, GamepadDevice,
+        InputAction, Started,
+    },
+};
 use bevy_tnua::prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController};
 
-use crate::{animation::animation_states::AnimationState, world::players::Player};
+use crate::{
+    animation::animation_states::AnimationState,
+    world::{platform_control::ControlPanelInputContext, players::Player},
+};
 
 #[derive(InputAction)]
 #[action_output(f32)]
@@ -11,6 +24,28 @@ pub struct Move;
 #[derive(InputAction)]
 #[action_output(bool)]
 pub struct Jump;
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct Interact;
+
+#[derive(InputAction)]
+#[action_output(Vec2)]
+pub struct NavigatePlatform;
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct CloseInteract;
+
+pub(crate) fn close_control_panel_interact(
+    trigger: Trigger<Started<CloseInteract>>,
+    mut commands: Commands,
+) {
+    commands
+        .entity(trigger.target())
+        .remove_with_requires::<ControlPanelInputContext>()
+        .despawn_related::<Actions<ControlPanelInputContext>>();
+}
 
 pub fn gamepad_assignment_system(
     mut events: EventReader<GamepadConnectionEvent>,
@@ -46,11 +81,11 @@ pub fn on_move(
         .basis(TnuaBuiltinWalk {
             desired_velocity: vec3(speed * 2048.0, 0., 0.),
             desired_forward: None,
-            float_height: 40.0,
+            float_height: 60.0,
             cling_distance: 20.0,
-            spring_strength: 100.0,
+            spring_strength: 400.0,
             spring_dampening: 1.2,
-            acceleration: 100_000_000.0,
+            acceleration: 90.0,
             air_acceleration: 40.0,
             coyote_time: 1.0,
             free_fall_extra_gravity: 60.0,
@@ -61,7 +96,7 @@ pub fn on_move(
         });
     if let Ok(mut player_state) = player_state_query.get_mut(trigger.target()) {
         let current_state = player_state.clone();
-        info!("Current State: {:#?}", current_state);
+        //info!("Current State: {:#?}", current_state);
         match current_state {
             AnimationState::Idle => {
                 *player_state = AnimationState::Walk;
@@ -119,18 +154,17 @@ pub(crate) fn on_jump(
     mut controllers: Query<&mut TnuaController, With<Player>>,
     mut player_state_query: Query<&mut AnimationState, With<Player>>,
 ) {
-    info!("Player {} Jumping", trigger.target());
     controllers
         .get_mut(trigger.target())
         .unwrap()
         .action(TnuaBuiltinJump {
-            height: 40.0,
+            height: 200.0,
             vertical_displacement: None,
             allow_in_air: false,
             upslope_extra_gravity: 30.0,
             takeoff_extra_gravity: 30.0,
-            takeoff_above_velocity: 2.0,
-            fall_extra_gravity: 20.0,
+            takeoff_above_velocity: 60.0,
+            fall_extra_gravity: 160.0,
             shorten_extra_gravity: 60.0,
             peak_prevention_at_upward_velocity: 1.0,
             peak_prevention_extra_gravity: 20.0,
@@ -142,7 +176,7 @@ pub(crate) fn on_jump(
 
     if let Ok(mut player_state) = player_state_query.get_mut(trigger.target()) {
         let current_state = player_state.clone();
-        info!("Current State: {:#?}", current_state);
+        //info!("Current State: {:#?}", current_state);
         match current_state {
             AnimationState::Jump => {}
             _ => {
@@ -150,4 +184,25 @@ pub(crate) fn on_jump(
             }
         }
     }
+}
+
+pub(crate) fn on_interact(trigger: Trigger<Fired<Interact>>, mut commands: Commands) {
+    info!("Player {}, Pressed Interact!", trigger.target());
+    commands.entity(trigger.target()).insert((
+        ControlPanelInputContext,
+        ContextPriority::<ControlPanelInputContext>::new(1),
+        actions!(ControlPanelInputContext[
+            (
+                Action::<NavigatePlatform>::new(),
+                Bindings::spawn((Cardinal::wasd_keys(), Axial::left_stick())),
+            ), (
+                Action::<CloseInteract>::new(),
+                ActionSettings {
+                    require_reset: true,
+                    ..Default::default()
+                },
+                bindings![KeyCode::KeyE, GamepadButton::North]
+            )
+        ]),
+    ));
 }

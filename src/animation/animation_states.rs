@@ -113,7 +113,7 @@ pub fn handle_animating(
     >,
 ) {
     for (mut anim_state, mut sprite, state, entity_id) in query.iter_mut() {
-        info!("Player {} State Changed to {:#?}", entity_id, state.clone());
+        //info!("Player {} State Changed to {:#?}", entity_id, state.clone());
         match state {
             AnimationState::Idle => {
                 *anim_state = player_animations.idle.anim_state.clone();
