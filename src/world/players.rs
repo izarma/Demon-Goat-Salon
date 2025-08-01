@@ -55,7 +55,7 @@ pub(crate) fn spawn_players(
             custom_size: Some(Vec2::new(128., 128.)),
             ..default()
         },
-        Transform::from_xyz(-256., 180., 0.),
+        Transform::from_xyz(-256., -120., 0.),
         OnGameScreen,
     ));
 
@@ -77,12 +77,13 @@ pub(crate) fn spawn_players(
         ) , (
             Action::<Interact>::new(),
             bindings![KeyCode::KeyE, GamepadButton::RightTrigger],
+            Pulse::new(1.0),
         )]
     ),));
 
     let mut plr2 = commands.spawn((
         Player::Two,
-        Transform::from_xyz(256., 180., 0.),
+        Transform::from_xyz(256., -120., 0.),
         Sprite {
             image: image_assets.imp_idle.clone(),
             texture_atlas: Some(TextureAtlas {

@@ -1,7 +1,10 @@
 use avian2d::prelude::{Collider, RigidBody};
 use bevy::prelude::*;
 
-use crate::{engine::{asset_loader::ImageAssets, game_runner::OnGameScreen}, ui::game_over::OnGameOver};
+use crate::{
+    engine::{asset_loader::ImageAssets, game_runner::OnGameScreen},
+    ui::game_over::OnGameOver,
+};
 
 #[derive(Component)]
 pub struct Floor;
@@ -45,14 +48,13 @@ pub(crate) fn spawn_platform(mut commands: Commands, image_assets: Res<ImageAsse
         OnGameScreen,
     ));
 
-
     commands.spawn((
         Sprite {
             image: image_assets.lever_vertical.clone(),
             custom_size: Some(Vec2::new(36., 36.)),
             ..default()
         },
-        Transform::from_xyz(-367.0, -110.0, 2.0),
+        Transform::from_xyz(-367.0, -110.0, -0.1),
         OnGameScreen,
     ));
 
@@ -62,7 +64,7 @@ pub(crate) fn spawn_platform(mut commands: Commands, image_assets: Res<ImageAsse
             custom_size: Some(Vec2::new(36., 36.)),
             ..default()
         },
-        Transform::from_xyz(-333.0, -110.0, 2.0),
+        Transform::from_xyz(-333.0, -110.0, -0.1),
         OnGameScreen,
     ));
     commands.spawn((

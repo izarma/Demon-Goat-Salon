@@ -1,5 +1,5 @@
 [package]
-name = "demon-salon-test"
+name = "demon-goat-salon"
 version = "0.1.0"
 edition = "2024"
 
@@ -20,7 +20,20 @@ opt-level = 1
 [profile.dev.package."*"]
 opt-level = 3
 
-[profile.web-release]
-inherits = "release"
-opt-level = "z"
+[profile.release]
+# Compile the entire crate as one unit.
+# Slows compile times, marginal improvements.
+codegen-units = 1
+# Do a second optimization pass over the entire program, including dependencies.
+# Slows compile times, marginal improvements.
+lto = "thin"
 
+# This profile will be used by `bevy run web` automatically.
+[profile.web-release]
+# Default to release profile values.
+inherits = "release"
+# Optimize with size in mind (also try "z", sometimes it is better).
+# Slightly slows compile times, great improvements to file size and runtime performance.
+opt-level = "s"
+# Strip all debugging information from the binary to slightly reduce file size.
+strip = "debuginfo"

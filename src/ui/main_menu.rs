@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_seedling::sample::SamplePlayer;
 
 use crate::{
     consts::{BUTTON_BORDER, HOVERED_BUTTON, NORMAL_BUTTON, TEXT_COLOR},
@@ -14,6 +15,10 @@ pub enum MenuButtons {
 pub struct OnMainMenuScreen;
 
 pub fn setup_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn((
+        SamplePlayer::new(asset_server.load("audio/main-menu.ogg")),
+        OnMainMenuScreen,
+    ));
     let menu_font = asset_server.load("fonts/UncialAntiqua-Regular.ttf");
     let title_img = asset_server.load("ui/name.png");
     commands

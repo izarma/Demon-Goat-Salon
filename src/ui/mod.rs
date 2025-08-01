@@ -1,11 +1,13 @@
 use bevy::prelude::*;
 
 use crate::{
-    engine::{game_runner::OnGameScreen, GameState},
+    engine::{GameState, game_runner::OnGameScreen},
     ui::{
-        customer_details::update_points, game_over::{
+        customer_details::update_points,
+        game_over::{
             cleanup_gameover, play_game_over_bg, retry_button_interaction, spawn_game_over_ui,
-        }, main_menu::{button_interaction_system, cleanup_menu, setup_main_menu}
+        },
+        main_menu::{button_interaction_system, cleanup_menu, setup_main_menu},
     },
 };
 

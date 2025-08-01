@@ -62,7 +62,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
     // goat base
     commands.spawn((
         Customer {
-            anger_timer: Timer::new(Duration::from_secs_f32(89.0), TimerMode::Once),
+            anger_timer: Timer::new(Duration::from_secs_f32(1.0), TimerMode::Once),
         },
         Sprite {
             image: image_assets.goat_base.clone(),
@@ -78,7 +78,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
 
     // goat body
     commands.spawn((
-        Sprite  {
+        Sprite {
             image: image_assets.goat_body.clone(),
             custom_size: Some(Vec2::new(389.4, 322.8)),
             ..default()
@@ -87,6 +87,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             translation: Vec3::new(0., -150., -14.),
             ..default()
         },
+        OnGameOver,
     ));
 
     // goat jaw
@@ -172,7 +173,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(-130., 90., -11.6),
+            translation: Vec3::new(-110., 110., -11.6),
             ..default()
         },
         OnGameOver,
@@ -187,7 +188,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(130., 90., -11.6),
+            translation: Vec3::new(110., 110., -11.6),
             ..default()
         },
         OnGameOver,
@@ -202,7 +203,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(-170., 58., -11.7),
+            translation: Vec3::new(-140., 58., -11.7),
             ..default()
         },
         OnGameOver,
@@ -217,7 +218,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(170., 58., -11.7),
+            translation: Vec3::new(140., 58., -11.7),
             ..default()
         },
         OnGameOver,
@@ -262,7 +263,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(-120., 10., -11.71),
+            translation: Vec3::new(-130., 20., -11.71),
             ..default()
         },
         OnGameOver,
@@ -277,7 +278,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(120., 10., -11.71),
+            translation: Vec3::new(130., 20., -11.71),
             ..default()
         },
         OnGameOver,
@@ -292,7 +293,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(-170., -50., -11.72),
+            translation: Vec3::new(-220., -40., -11.72),
             ..default()
         },
         OnGameOver,
@@ -307,7 +308,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(170., -50., -11.72),
+            translation: Vec3::new(220., -40., -11.72),
             ..default()
         },
         OnGameOver,
@@ -412,7 +413,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(-220., -120., -11.73),
+            translation: Vec3::new(-200., -120., -11.73),
             ..default()
         },
         OnGameOver,
@@ -427,7 +428,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(220., -120., -11.73),
+            translation: Vec3::new(200., -120., -11.73),
             ..default()
         },
         OnGameOver,
@@ -442,7 +443,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(-260., -110., -11.73),
+            translation: Vec3::new(-220., -110., -11.73),
             ..default()
         },
         OnGameOver,
@@ -457,7 +458,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(260., -110., -11.73),
+            translation: Vec3::new(220., -110., -11.73),
             ..default()
         },
         OnGameOver,
@@ -472,7 +473,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(-300., -100., -11.73),
+            translation: Vec3::new(-240., -100., -11.73),
             ..default()
         },
         OnGameOver,
@@ -487,7 +488,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(300., -100., -11.73),
+            translation: Vec3::new(240., -100., -11.73),
             ..default()
         },
         OnGameOver,
@@ -502,7 +503,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(-340., -90., -11.71),
+            translation: Vec3::new(-260., -90., -11.71),
             ..default()
         },
         OnGameOver,
@@ -517,7 +518,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(340., -90., -11.71),
+            translation: Vec3::new(260., -90., -11.71),
             ..default()
         },
         OnGameOver,

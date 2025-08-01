@@ -111,17 +111,20 @@ pub fn spawn_game_over_ui(
             if let Ok(points) = points_query.single() {
                 let game_over_text: String;
                 info!("Points: {:#?}", points.total);
-                if points.total > 199 {
-                    game_over_text = format!("You Win!\t\tTotal Points: {}", points.total)
+                if points.total > 229 {
+                    game_over_text = format!("You Survived Hell!!\t\tApples - {}", points.total)
                 } else {
-                    game_over_text = format!("You Lose!\t\tTotal Points: {}", points.total)
+                    game_over_text = format!(
+                        "Hell's Rent is 230  Apples\t\tMissed by {}",
+                        (230 - points.total)
+                    )
                 }
                 parent.spawn((
                     Text::new(game_over_text),
                     BorderRadius::ZERO,
                     TextFont {
                         font: menu_font.clone(),
-                        font_size: 60.0,
+                        font_size: 40.0,
                         ..default()
                     },
                     TextColor(TEXT_COLOR),
@@ -162,11 +165,24 @@ pub fn retry_button_interaction(
     }
 }
 
-pub fn play_game_over_bg(mut commands: Commands, audio_assets: Res<AudioAssets>) {
-    commands.spawn((
-        SamplePlayer::new(audio_assets.lose.clone()).looping(),
-        OnGameOver,
-    ));
+pub fn play_game_over_bg(
+    mut commands: Commands,
+    audio_assets: Res<AudioAssets>,
+    points_query: Query<&Score>,
+) {
+    if let Ok(points) = points_query.single() {
+        if points.total > 229 {
+            commands.spawn((
+                SamplePlayer::new(audio_assets.win.clone()).looping(),
+                OnGameOver,
+            ));
+        } else {
+            commands.spawn((
+                SamplePlayer::new(audio_assets.lose.clone()).looping(),
+                OnGameOver,
+            ));
+        }
+    }
 }
 
 pub fn cleanup_gameover(mut commands: Commands, query: Query<Entity, With<OnGameOver>>) {

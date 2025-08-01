@@ -10,10 +10,12 @@ use bevy_enhanced_input::{
 use bevy_tnua::prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController};
 
 use crate::{
-    animation::animation_states::AnimationState, ui::customer_details::Score, world::{
+    animation::animation_states::AnimationState,
+    ui::customer_details::Score,
+    world::{
         goat::GoatHair, platform_control::ControlPanelInputContext, players::Player,
         salon::ControlPanel,
-    }
+    },
 };
 
 #[derive(InputAction)]
@@ -74,17 +76,15 @@ pub fn on_move(
     } else {
         speed = -1000.0;
     }
-    controllers
-        .get_mut(trigger.target())
-        .unwrap()
-        .basis(TnuaBuiltinWalk {
+    if let Ok(mut controller) = controllers.get_mut(trigger.target()) {
+        controller.basis(TnuaBuiltinWalk {
             desired_velocity: vec3(speed * 2048.0, 0., 0.),
             desired_forward: None,
             float_height: 60.0,
             cling_distance: 20.0,
             spring_strength: 400.0,
             spring_dampening: 1.2,
-            acceleration: 90.0,
+            acceleration: 120.0,
             air_acceleration: 40.0,
             coyote_time: 1.0,
             free_fall_extra_gravity: 60.0,
@@ -93,6 +93,8 @@ pub fn on_move(
             turning_angvel: 10.0,
             ..Default::default()
         });
+    }
+
     if let Ok(mut player_state) = player_state_query.get_mut(trigger.target()) {
         let current_state = player_state.clone();
         //info!("Current State: {:#?}", current_state);
@@ -117,10 +119,8 @@ pub fn on_move_end(
     mut controllers: Query<&mut TnuaController, With<Player>>,
     mut player_state_query: Query<&mut AnimationState, With<Player>>,
 ) {
-    controllers
-        .get_mut(trigger.target())
-        .unwrap()
-        .basis(TnuaBuiltinWalk {
+    if let Ok(mut controller) = controllers.get_mut(trigger.target()) {
+        controller.basis(TnuaBuiltinWalk {
             desired_velocity: Vec3::ZERO,
             desired_forward: None,
             float_height: 40.0,
@@ -136,6 +136,8 @@ pub fn on_move_end(
             turning_angvel: 10.0,
             ..Default::default()
         });
+    }
+
     if let Ok(mut player_state) = player_state_query.get_mut(trigger.target()) {
         let current_state = player_state.clone();
         //info!("Current State: {:#?}", current_state);
@@ -241,7 +243,6 @@ pub(crate) fn on_interact(
                         min_dist_sq = distance;
                         closest_hair = Some(entity);
                     }
-                    
                 }
                 match closest_hair {
                     Some(entity_id) => {
@@ -249,8 +250,8 @@ pub(crate) fn on_interact(
                         if let Ok(mut score) = points_query.single_mut() {
                             score.total += 10;
                         }
-                    },
-                    None => {},
+                    }
+                    None => {}
                 }
             }
             Player::Two => {
@@ -277,28 +278,27 @@ pub(crate) fn on_interact(
                             ]),
                         ));
                     }
-                let mut closest_hair: Option<Entity> = None;
-                let mut min_dist_sq = max_interaction_radius.clone();
-                for (entity, hair_transform) in hair_interaction_query {
-                    // Check closest hair with threshold max_interaction_radius and despawn only that
-                    let distance = hair_transform
-                        .translation
-                        .distance_squared(player_transform.translation);
-                    if distance < min_dist_sq {
-                        min_dist_sq = distance;
-                        closest_hair = Some(entity);
-                    }
-                    
-                }
-                match closest_hair {
-                    Some(entity_id) => {
-                        commands.entity(entity_id).despawn();
-                        if let Ok(mut score) = points_query.single_mut() {
-                            score.total += 10;
+                    let mut closest_hair: Option<Entity> = None;
+                    let mut min_dist_sq = max_interaction_radius.clone();
+                    for (entity, hair_transform) in hair_interaction_query {
+                        // Check closest hair with threshold max_interaction_radius and despawn only that
+                        let distance = hair_transform
+                            .translation
+                            .distance_squared(player_transform.translation);
+                        if distance < min_dist_sq {
+                            min_dist_sq = distance;
+                            closest_hair = Some(entity);
                         }
-                    },
-                    None => {},
-                }
+                    }
+                    match closest_hair {
+                        Some(entity_id) => {
+                            commands.entity(entity_id).despawn();
+                            if let Ok(mut score) = points_query.single_mut() {
+                                score.total += 10;
+                            }
+                        }
+                        None => {}
+                    }
                 }
             }
         }
