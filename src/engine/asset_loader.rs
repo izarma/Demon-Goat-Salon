@@ -75,6 +75,10 @@ pub struct ImageAssets {
     pub goat_beard: Handle<Image>,
     #[asset(path = "ui/game_over.png")]
     pub game_over_text: Handle<Image>,
+    #[asset(path = "ui/lever-vertical.png")]
+    pub lever_vertical: Handle<Image>,
+    #[asset(path = "ui/lever-horizontal.png")]
+    pub lever_horizontal: Handle<Image>,
 }
 
 #[derive(AssetCollection, Resource)]
