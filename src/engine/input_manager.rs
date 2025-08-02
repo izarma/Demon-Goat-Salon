@@ -13,7 +13,7 @@ use bevy_tnua::prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController};
 
 use crate::{
     animation::animation_states::AnimationState,
-    engine::asset_loader::ImageAssets,
+    engine::{asset_loader::ImageAssets, game_runner::OnGameScreen},
     ui::customer_details::{Score, UiPopupTimer},
     world::{
         goat::GoatHair, platform_control::ControlPanelInputContext, players::Player,
@@ -242,6 +242,7 @@ pub(crate) fn on_interact(
                             },
                             Transform::from_xyz(-367.0, -110.0, -0.1),
                             ControlPanelUi,
+                            OnGameScreen,
                         ));
 
                         commands.spawn((
@@ -252,6 +253,7 @@ pub(crate) fn on_interact(
                             },
                             Transform::from_xyz(-333.0, -110.0, -0.1),
                             ControlPanelUi,
+                            OnGameScreen,
                         ));
                     }
                 }
@@ -281,7 +283,8 @@ pub(crate) fn on_interact(
                             },
                             UiPopupTimer {
                                 timer: Timer::new(Duration::from_secs_f32(5.0), TimerMode::Once),
-                            }
+                            },
+                            OnGameScreen,
                         ));
                         commands.entity(entity_id).despawn();
                         if let Ok(mut score) = points_query.single_mut() {
@@ -322,6 +325,7 @@ pub(crate) fn on_interact(
                             },
                             Transform::from_xyz(-367.0, -110.0, -0.1),
                             ControlPanelUi,
+                            OnGameScreen,
                         ));
 
                         commands.spawn((
@@ -332,6 +336,7 @@ pub(crate) fn on_interact(
                             },
                             Transform::from_xyz(-333.0, -110.0, -0.1),
                             ControlPanelUi,
+                            OnGameScreen,
                         ));
                     }
                     let mut closest_hair: Option<(Entity, &Transform)> = None;
@@ -358,6 +363,7 @@ pub(crate) fn on_interact(
                                     translation: hair_transform.translation,
                                     ..default()
                                 },
+                                OnGameScreen,
                                 UiPopupTimer {
                                 timer: Timer::new(Duration::from_secs_f32(5.0), TimerMode::Once),
                             }
