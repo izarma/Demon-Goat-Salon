@@ -74,25 +74,6 @@ pub(crate) fn spawn_platform(mut commands: Commands, image_assets: Res<ImageAsse
 
     commands.spawn((
         Sprite {
-            image: image_assets.lever_vertical.clone(),
-            custom_size: Some(Vec2::new(36., 36.)),
-            ..default()
-        },
-        Transform::from_xyz(-367.0, -110.0, -0.1),
-        OnGameScreen,
-    ));
-
-    commands.spawn((
-        Sprite {
-            image: image_assets.lever_horizontal.clone(),
-            custom_size: Some(Vec2::new(36., 36.)),
-            ..default()
-        },
-        Transform::from_xyz(-333.0, -110.0, -0.1),
-        OnGameScreen,
-    ));
-    commands.spawn((
-        Sprite {
             image: image_assets.joystick.clone(),
             custom_size: Some(Vec2::new(11.8, 27.9)),
             ..default()

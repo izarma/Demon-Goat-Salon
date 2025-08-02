@@ -11,6 +11,7 @@ use bevy_tnua::prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController};
 
 use crate::{
     animation::animation_states::AnimationState,
+    engine::asset_loader::ImageAssets,
     ui::customer_details::Score,
     world::{
         goat::GoatHair, platform_control::ControlPanelInputContext, players::Player,
@@ -41,7 +42,11 @@ pub struct CloseInteract;
 pub(crate) fn close_control_panel_interact(
     trigger: Trigger<Started<CloseInteract>>,
     mut commands: Commands,
+    interact_ui_query: Query<Entity, With<ControlPanelUi>>,
 ) {
+    for ui_entity in interact_ui_query.iter() {
+        commands.entity(ui_entity).despawn();
+    }
     commands
         .entity(trigger.target())
         .remove_with_requires::<ControlPanelInputContext>()
@@ -187,6 +192,9 @@ pub(crate) fn on_jump(
     }
 }
 
+#[derive(Component)]
+pub struct ControlPanelUi;
+
 pub(crate) fn on_interact(
     trigger: Trigger<Fired<Interact>>,
     mut commands: Commands,
@@ -194,6 +202,7 @@ pub(crate) fn on_interact(
     control_panel_query: Query<&Transform, With<ControlPanel>>,
     hair_interaction_query: Query<(Entity, &Transform), With<GoatHair>>,
     mut points_query: Query<&mut Score>,
+    image_assets: Res<ImageAssets>,
 ) {
     let max_interaction_radius = 40.0 * 40.0;
 
@@ -213,6 +222,7 @@ pub(crate) fn on_interact(
                     //     max_interaction_radius
                     // );
                     if max_interaction_radius > distance {
+                        // send event for control panel Ui
                         commands.entity(trigger.target()).insert((
                             ControlPanelInputContext,
                             ContextPriority::<ControlPanelInputContext>::new(1),
@@ -229,6 +239,25 @@ pub(crate) fn on_interact(
                                     bindings![KeyCode::KeyE, GamepadButton::RightTrigger]
                                 )
                             ]),
+                        ));
+                        commands.spawn((
+                            Sprite {
+                                image: image_assets.lever_vertical.clone(),
+                                custom_size: Some(Vec2::new(36., 36.)),
+                                ..default()
+                            },
+                            Transform::from_xyz(-367.0, -110.0, -0.1),
+                            ControlPanelUi,
+                        ));
+
+                        commands.spawn((
+                            Sprite {
+                                image: image_assets.lever_horizontal.clone(),
+                                custom_size: Some(Vec2::new(36., 36.)),
+                                ..default()
+                            },
+                            Transform::from_xyz(-333.0, -110.0, -0.1),
+                            ControlPanelUi,
                         ));
                     }
                 }
@@ -248,6 +277,7 @@ pub(crate) fn on_interact(
                     Some(entity_id) => {
                         commands.entity(entity_id).despawn();
                         if let Ok(mut score) = points_query.single_mut() {
+                            // send event to spawn point up apple here
                             score.total += 10;
                         }
                     }
@@ -276,6 +306,25 @@ pub(crate) fn on_interact(
                                     bindings![KeyCode::Enter, GamepadButton::RightTrigger]
                                 )
                             ]),
+                        ));
+                                                commands.spawn((
+                            Sprite {
+                                image: image_assets.lever_vertical.clone(),
+                                custom_size: Some(Vec2::new(36., 36.)),
+                                ..default()
+                            },
+                            Transform::from_xyz(-367.0, -110.0, -0.1),
+                            ControlPanelUi,
+                        ));
+
+                        commands.spawn((
+                            Sprite {
+                                image: image_assets.lever_horizontal.clone(),
+                                custom_size: Some(Vec2::new(36., 36.)),
+                                ..default()
+                            },
+                            Transform::from_xyz(-333.0, -110.0, -0.1),
+                            ControlPanelUi,
                         ));
                     }
                     let mut closest_hair: Option<Entity> = None;
