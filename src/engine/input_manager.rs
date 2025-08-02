@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use bevy::{input::gamepad::GamepadConnectionEvent, prelude::*};
 use bevy_enhanced_input::{
     action::{Action, ActionSettings},
@@ -12,7 +14,7 @@ use bevy_tnua::prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController};
 use crate::{
     animation::animation_states::AnimationState,
     engine::asset_loader::ImageAssets,
-    ui::customer_details::Score,
+    ui::customer_details::{Score, UiPopupTimer},
     world::{
         goat::GoatHair, platform_control::ControlPanelInputContext, players::Player,
         salon::ControlPanel,
@@ -214,15 +216,7 @@ pub(crate) fn on_interact(
                     let distance = control_panel_transform
                         .translation
                         .distance_squared(player_transform.translation);
-                    // info!(
-                    //     "Distance between Player {:#?} and Control Panel {:#?} is {:#?} and threshold is {}",
-                    //     player_transform.translation,
-                    //     control_panel_transform.translation,
-                    //     distance,
-                    //     max_interaction_radius
-                    // );
                     if max_interaction_radius > distance {
-                        // send event for control panel Ui
                         commands.entity(trigger.target()).insert((
                             ControlPanelInputContext,
                             ContextPriority::<ControlPanelInputContext>::new(1),
@@ -261,7 +255,7 @@ pub(crate) fn on_interact(
                         ));
                     }
                 }
-                let mut closest_hair: Option<Entity> = None;
+                let mut closest_hair: Option<(Entity, &Transform)> = None;
                 let mut min_dist_sq = 150.0 * 150.0;
                 for (entity, hair_transform) in hair_interaction_query {
                     // Check closest hair with threshold max_interaction_radius and despawn only that
@@ -270,14 +264,27 @@ pub(crate) fn on_interact(
                         .distance_squared(player_transform.translation);
                     if distance < min_dist_sq {
                         min_dist_sq = distance;
-                        closest_hair = Some(entity);
+                        closest_hair = Some((entity, hair_transform));
                     }
                 }
                 match closest_hair {
-                    Some(entity_id) => {
+                    Some((entity_id, hair_transform)) => {
+                        commands.spawn((
+                            Sprite {
+                                image: image_assets.golden_apple.clone(),
+                                custom_size: Some(Vec2::new(64., 64.)),
+                                ..default()
+                            },
+                            Transform {
+                                translation: hair_transform.translation,
+                                ..default()
+                            },
+                            UiPopupTimer {
+                                timer: Timer::new(Duration::from_secs_f32(5.0), TimerMode::Once),
+                            }
+                        ));
                         commands.entity(entity_id).despawn();
                         if let Ok(mut score) = points_query.single_mut() {
-                            // send event to spawn point up apple here
                             score.total += 10;
                         }
                     }
@@ -307,7 +314,7 @@ pub(crate) fn on_interact(
                                 )
                             ]),
                         ));
-                                                commands.spawn((
+                        commands.spawn((
                             Sprite {
                                 image: image_assets.lever_vertical.clone(),
                                 custom_size: Some(Vec2::new(36., 36.)),
@@ -327,7 +334,7 @@ pub(crate) fn on_interact(
                             ControlPanelUi,
                         ));
                     }
-                    let mut closest_hair: Option<Entity> = None;
+                    let mut closest_hair: Option<(Entity, &Transform)> = None;
                     let mut min_dist_sq = max_interaction_radius.clone();
                     for (entity, hair_transform) in hair_interaction_query {
                         // Check closest hair with threshold max_interaction_radius and despawn only that
@@ -336,11 +343,25 @@ pub(crate) fn on_interact(
                             .distance_squared(player_transform.translation);
                         if distance < min_dist_sq {
                             min_dist_sq = distance;
-                            closest_hair = Some(entity);
+                            closest_hair = Some((entity, hair_transform));
                         }
                     }
                     match closest_hair {
-                        Some(entity_id) => {
+                        Some((entity_id, hair_transform)) => {
+                            commands.spawn((
+                                Sprite {
+                                    image: image_assets.golden_apple.clone(),
+                                    custom_size: Some(Vec2::new(64., 64.)),
+                                    ..default()
+                                },
+                                Transform {
+                                    translation: hair_transform.translation,
+                                    ..default()
+                                },
+                                UiPopupTimer {
+                                timer: Timer::new(Duration::from_secs_f32(5.0), TimerMode::Once),
+                            }
+                            ));
                             commands.entity(entity_id).despawn();
                             if let Ok(mut score) = points_query.single_mut() {
                                 score.total += 10;

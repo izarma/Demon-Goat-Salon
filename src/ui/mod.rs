@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 
 use crate::{
-    engine::{GameState, game_runner::OnGameScreen},
+    engine::{game_runner::OnGameScreen, GameState},
     ui::{
-        customer_details::update_points,
+        customer_details::{point_up_ui_timer, update_gapple, update_points},
         game_over::{
             cleanup_gameover, play_game_over_bg, retry_button_interaction, spawn_game_over_ui,
         },
@@ -26,7 +26,7 @@ impl Plugin for GameUiPlugin {
                 button_interaction_system.run_if(in_state(GameState::MainMenu)),
             )
             .add_systems(OnExit(GameState::MainMenu), cleanup_menu)
-            .add_systems(Update, update_points.run_if(in_state(GameState::InGame)))
+            .add_systems(Update, (update_points, point_up_ui_timer, update_gapple).run_if(in_state(GameState::InGame)))
             .add_systems(OnExit(GameState::InGame), cleanup_game)
             .add_systems(
                 OnEnter(GameState::GameOver),

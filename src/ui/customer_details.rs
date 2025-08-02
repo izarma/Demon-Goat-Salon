@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{
     consts::TEXT_COLOR,
-    engine::{GameState, game_runner::OnGameScreen},
+    engine::{game_runner::OnGameScreen, GameState},
     ui::game_over::OnGameOver,
     world::goat::Customer,
 };
@@ -113,5 +113,32 @@ pub fn game_over(mut game_state: ResMut<NextState<GameState>>, customer_query: Q
         if customer.anger_timer.finished() {
             game_state.set(GameState::GameOver);
         }
+    }
+}
+
+#[derive(Component)]
+pub struct UiPopupTimer {
+    pub timer: Timer,
+}
+
+pub fn point_up_ui_timer(
+    mut commands: Commands,
+    gapple_query: Query<(Entity, &UiPopupTimer)>,
+) {
+    for (entity, ui_popup_timer) in gapple_query.iter() {
+        if ui_popup_timer.timer.finished() {
+            info!("Gapple: {}", entity);
+            commands.entity(entity).despawn();
+        }
+    }
+}
+
+pub fn update_gapple(
+    time: Res<Time>,
+    gapple_query: Query<(&mut UiPopupTimer, &mut Transform)>,
+) {
+    for (mut timer, mut xf) in gapple_query {
+        timer.timer.tick(time.delta());
+        xf.translation -= Vec3::new(0.0, 1.0, 0.0);
     }
 }
