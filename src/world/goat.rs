@@ -62,7 +62,7 @@ fn spawn_customer(mut commands: Commands, image_assets: Res<ImageAssets>) {
     // goat base
     commands.spawn((
         Customer {
-            anger_timer: Timer::new(Duration::from_secs_f32(1.0), TimerMode::Once),
+            anger_timer: Timer::new(Duration::from_secs_f32(89.0), TimerMode::Once),
         },
         Sprite {
             image: image_assets.goat_base.clone(),

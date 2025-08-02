@@ -29,6 +29,30 @@ pub(crate) fn spawn_platform(mut commands: Commands, image_assets: Res<ImageAsse
         OnGameOver,
     ));
     commands.spawn((
+        Floor,
+        Transform::from_xyz(0.0, -270.0, -10.0).with_scale(Vec3::new(2.0, 1.0, 1.0)),
+        Sprite {
+            image: image_assets.floor.clone(),
+            custom_size: Some(Vec2::new(720.0, 136.0)),
+            ..default()
+        },
+        RigidBody::Static,
+        Collider::rectangle(1440., 135.0),
+        OnGameScreen,
+    ));
+    commands.spawn((
+        Transform::from_xyz(600.0, 0., 0.),
+        RigidBody::Static,
+        Collider::rectangle(128., 800.0),
+        OnGameScreen,
+    ));
+    commands.spawn((
+        Transform::from_xyz(-600.0, 0., 0.),
+        RigidBody::Static,
+        Collider::rectangle(128., 800.0),
+        OnGameScreen,
+    ));
+    commands.spawn((
         Sprite {
             image: image_assets.control_panel.clone(),
             custom_size: Some(Vec2::new(64.0, 64.0)),
