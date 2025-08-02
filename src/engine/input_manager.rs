@@ -272,7 +272,7 @@ pub(crate) fn on_interact(
                         commands.spawn((
                             Sprite {
                                 image: image_assets.golden_apple.clone(),
-                                custom_size: Some(Vec2::new(64., 64.)),
+                                custom_size: Some(Vec2::new(32., 32.)),
                                 ..default()
                             },
                             Transform {
@@ -351,7 +351,7 @@ pub(crate) fn on_interact(
                             commands.spawn((
                                 Sprite {
                                     image: image_assets.golden_apple.clone(),
-                                    custom_size: Some(Vec2::new(64., 64.)),
+                                    custom_size: Some(Vec2::new(32., 32.)),
                                     ..default()
                                 },
                                 Transform {
