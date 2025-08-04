@@ -340,7 +340,7 @@ pub(crate) fn on_interact(
                         ));
                     }
                     let mut closest_hair: Option<(Entity, &Transform)> = None;
-                    let mut min_dist_sq = max_interaction_radius.clone();
+                    let mut min_dist_sq = 150.0 * 150.0;
                     for (entity, hair_transform) in hair_interaction_query {
                         // Check closest hair with threshold max_interaction_radius and despawn only that
                         let distance = hair_transform
