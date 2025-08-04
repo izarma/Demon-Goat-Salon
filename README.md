@@ -10,7 +10,7 @@
 <!-- BADGES -->
 <!-- local repository, no metadata badges. -->
 
-<em>Built with the tools and technologies:</em>
+<em>Built with:</em>
 
 <img src="https://img.shields.io/badge/Rust-000000.svg?style=flat-square&logo=Rust&logoColor=white" alt="Rust">
 <img src="https://img.shields.io/badge/Bevy-232326.svg?style=flat-square&logo=Bevy&logoColor=white" alt="Bevy">
